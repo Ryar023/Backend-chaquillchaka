@@ -17,7 +17,7 @@ const bookingSchema = new mongoose.Schema({
   totalUsd: { type: Number, required: true, default: 0 },
   paymentMethod: { type: String, enum: ['yape', 'plin', 'card', 'cash'], default: 'cash' },
   paymentCurrency: { type: String, enum: ['PEN', 'USD'], default: 'PEN' },
-  status: { type: String, enum: ['confirmed', 'cancelled'], default: 'confirmed' }
+  status: { type: String, enum: ['pending', 'confirmed', 'cancelled'], default: 'pending' }
 }, { timestamps: true });
 
 bookingSchema.index({ room: 1, status: 1, checkIn: 1, checkOut: 1 });

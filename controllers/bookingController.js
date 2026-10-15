@@ -30,7 +30,7 @@ async function createBooking(req, res, next) {
 
     const overlap = await Booking.exists({
       room: room._id,
-      status: 'confirmed',
+      status: { $in: ['pending', 'confirmed'] },
       checkIn: { $lt: end },
       checkOut: { $gt: start }
     });
