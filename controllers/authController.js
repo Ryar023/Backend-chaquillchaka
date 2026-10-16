@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { validationResult } = require('express-validator');
 const User = require('../models/User');
+const { isAllowedStaffEmail } = require('../utils/emailPolicy');
 
 async function login(req, res, next) {
   const errors = validationResult(req);
@@ -10,9 +11,15 @@ async function login(req, res, next) {
   const email = req.body.email.toLowerCase();
   const { password } = req.body;
   const secret = process.env.JWT_SECRET;
+  if (!isAllowedStaffEmail(email)) {
+    return res.status(400).json({ message: 'Usa una cuenta @chaquillchaka.com.pe.' });
+  }
   if (!secret) return res.status(503).json({ message: 'El acceso administrativo no está configurado en el servidor.' });
 
   try {
+    if (process.env.ADMIN_EMAIL && !isAllowedStaffEmail(process.env.ADMIN_EMAIL)) {
+      return res.status(503).json({ message: 'ADMIN_EMAIL debe terminar en @chaquillchaka.com.pe.' });
+    }
     let user = await User.findOne({ email }).select('+passwordHash');
     if (!user && process.env.ADMIN_EMAIL && process.env.ADMIN_PASSWORD &&
         email === process.env.ADMIN_EMAIL.toLowerCase() && password === process.env.ADMIN_PASSWORD) {
