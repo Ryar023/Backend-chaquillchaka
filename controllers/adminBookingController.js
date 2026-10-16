@@ -14,7 +14,11 @@ async function listBookings(req, res, next) {
       if (req.query.to) query.checkIn.$lte = new Date(`${req.query.to}T23:59:59.999Z`);
     }
 
-    const bookings = await Booking.find(query).populate('room', 'name type').sort({ checkIn: 1, createdAt: -1 }).lean();
+    const bookings = await Booking.find(query)
+      .select(req.admin.role === 'ACCOUNTING' ? '-customer' : '')
+      .populate('room', 'name type')
+      .sort({ checkIn: 1, createdAt: -1 })
+      .lean();
     return res.json({ data: bookings });
   } catch (error) {
     return next(error);
