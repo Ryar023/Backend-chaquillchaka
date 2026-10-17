@@ -25,6 +25,13 @@ router.post('/', [
   body('guests').isInt({ min: 1, max: 20 }).withMessage('El número de huéspedes debe ser válido.'),
   body('paymentMethod').optional().isIn(['yape', 'plin', 'card', 'cash']).withMessage('Selecciona un medio de pago válido.'),
   body('paymentCurrency').optional().isIn(['PEN', 'USD']).withMessage('Selecciona una moneda válida.'),
+  body('documentType').optional().isIn(['boleta', 'factura']).withMessage('Selecciona boleta o factura.'),
+  body('ruc').if(body('documentType').equals('factura'))
+    .trim().matches(/^(10|20)\d{9}$/).withMessage('Ingresa un RUC válido de 11 dígitos (empieza con 10 o 20).'),
+  body('businessName').if(body('documentType').equals('factura'))
+    .trim().isLength({ min: 3, max: 150 }).withMessage('Ingresa la razón social.'),
+  body('fiscalAddress').if(body('documentType').equals('factura'))
+    .trim().isLength({ min: 5, max: 200 }).withMessage('Ingresa la dirección fiscal.'),
   body('paymentMethod').custom((method, { req }) => {
     if ((method === 'yape' || method === 'plin') && req.body.paymentCurrency && req.body.paymentCurrency !== 'PEN') {
       throw new Error('Yape y Plin solo admiten pagos en soles.');

@@ -12,8 +12,13 @@ async function createBooking(req, res, next) {
     const {
       name, email, phone, roomId, checkIn, checkOut, guests,
       paymentMethod = 'cash',
-      paymentCurrency = 'PEN'
+      paymentCurrency = 'PEN',
+      documentType = 'boleta',
+      ruc, businessName, fiscalAddress
     } = req.body;
+    const billing = documentType === 'factura'
+      ? { documentType, ruc, businessName, fiscalAddress }
+      : { documentType: 'boleta' };
     const start = new Date(`${checkIn}T00:00:00.000Z`);
     const end = new Date(`${checkOut}T00:00:00.000Z`);
     const today = new Date();
@@ -51,7 +56,8 @@ async function createBooking(req, res, next) {
       pricePerNightUsd: room.priceUsd,
       totalUsd: room.priceUsd * nights,
       paymentMethod,
-      paymentCurrency
+      paymentCurrency,
+      billing
     });
 
     return res.status(201).json({
@@ -70,6 +76,7 @@ async function createBooking(req, res, next) {
         totalUsd: booking.totalUsd,
         paymentMethod: booking.paymentMethod,
         paymentCurrency: booking.paymentCurrency,
+        billing: booking.billing,
         status: booking.status
       }
     });
