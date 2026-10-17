@@ -1,4 +1,21 @@
 const Room = require('../models/Room');
+const Booking = require('../models/Booking');
+
+async function getOccupancy(req, res, next) {
+  try {
+    const today = new Date();
+    today.setUTCHours(0, 0, 0, 0);
+    const bookings = await Booking.find({
+      status: { $in: ['pending', 'confirmed'] },
+      checkOut: { $gt: today }
+    }).select('room checkIn checkOut').sort({ checkIn: 1 }).lean();
+    res.json({
+      data: bookings.map((b) => ({ roomId: String(b.room), checkIn: b.checkIn, checkOut: b.checkOut }))
+    });
+  } catch (error) {
+    next(error);
+  }
+}
 
 async function getRooms(req, res, next) {
   try {
@@ -20,4 +37,4 @@ async function getRoomById(req, res, next) {
   }
 }
 
-module.exports = { getRooms, getRoomById };
+module.exports = { getRooms, getRoomById, getOccupancy };
