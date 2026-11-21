@@ -7,6 +7,7 @@ const bookingRoutes = require('./routes/bookingRoutes');
 const authRoutes = require('./routes/authRoutes');
 const adminBookingRoutes = require('./routes/adminBookingRoutes');
 const adminUserRoutes = require('./routes/adminUserRoutes');
+const chatRoutes = require('./routes/chatRoutes');
 
 const app = express();
 const port = Number(process.env.PORT) || 3000;
@@ -30,6 +31,7 @@ app.use('/api/bookings', bookingRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/admin/bookings', adminBookingRoutes);
 app.use('/api/admin/users', adminUserRoutes);
+app.use('/api/chat', chatRoutes);
 
 app.use((req, res) => res.status(404).json({ message: 'Ruta no encontrada.' }));
 app.use((error, req, res, next) => {
