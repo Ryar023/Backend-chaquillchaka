@@ -3,7 +3,7 @@ const { GoogleGenAI } = require('@google/genai');
 const ChatSession = require('../models/ChatSession');
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-const GEMINI_MODEL = 'gemini-2.5-flash';
+const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-3.8-flash';
 const systemInstruction = `Eres un asistente útil para Chaquill Chak'a Hostal.
 Responde en español, mantén un tono amable y profesional, y ayuda a clientes con reservas, disponibilidad, habitaciones, precios, políticas del hostal y preguntas generales sobre Cusco y su experiencia de hospedaje.`;
 
